@@ -2,17 +2,32 @@
   "name": "cleaner-core",
   "version": "1.0.0",
   "description": "Type-safe input normalization and validation library for any JS/TS app — built for APIs, forms, and frameworks.",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "ts-node src/index.ts",
+    "build": "tsc",
+    "test": "jest",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pnayituriki/cleaner-core.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "normalize",
+    "input",
+    "validation",
+    "typescript",
+    "sanitization",
+    "api",
+    "express",
+    "middleware",
+    "object",
+    "validation"
+  ],
+  "author": "Patrick NAYITURIKI",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/pnayituriki/cleaner-core/issues"
   },
