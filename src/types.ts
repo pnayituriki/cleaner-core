@@ -41,5 +41,10 @@ export interface NormalizerOptions {
 /** Result object from normalization */
 export interface NormalizerResult<T = any> {
   result: T;
-  errors?: Record<string, string>; // Only populated in `collect` mode
+  errors?: ValidationErrorMap;
 }
+
+export interface ValidationErrorMap {
+  [field: string]: string;
+}
+
