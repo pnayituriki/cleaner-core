@@ -1,13 +1,9 @@
 import { NormalizerOptions } from "./types";
 
-export function isIsoDate(value: string): boolean {
-  return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/.test(value);
-}
-
 /**
  * Parses a single string value into a normalized type (boolean, number, date, null, etc.)
  */
-export function parseValue(
+function parseValue(
   value: any,
   key: string | null,
   options: NormalizerOptions
@@ -62,3 +58,91 @@ export function parseValue(
 
   return options.fieldParsers?.string?.(trimmed) ?? trimmed;
 }
+
+interface PasswordValidatorOptions {
+  minLength?: number;
+  requireUppercase?: boolean;
+  requireNumber?: boolean;
+  requireSymbol?: boolean;
+}
+
+function createPasswordValidator(options: PasswordValidatorOptions = {}) {
+  const {
+    minLength = 8,
+    requireUppercase = true,
+    requireNumber = true,
+    requireSymbol = true,
+  } = options;
+
+  return (val: any): boolean => {
+    if (typeof val !== "string") return false;
+    if (val.length < minLength) return false;
+    if (requireUppercase && !/[A-Z]/.test(val)) return false;
+    if (requireNumber && !/[0-9]/.test(val)) return false;
+    if (requireSymbol && !/[^a-zA-Z0-9]/.test(val)) return false;
+    return true;
+  };
+}
+
+function createEmailValidator(): (val: any) => boolean {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return (val: any): boolean => typeof val === "string" && emailRegex.test(val);
+}
+
+interface UsernameValidatorOptions {
+  minLength?: number;
+  maxLength?: number;
+  allowUnderscore?: boolean;
+  allowDigits?: boolean;
+}
+
+function createUsernameValidator(options: UsernameValidatorOptions = {}) {
+  const {
+    minLength = 3,
+    maxLength = 30,
+    allowUnderscore = true,
+    allowDigits = true,
+  } = options;
+
+  return (val: any): boolean => {
+    if (typeof val !== "string") return false;
+    if (val.length < minLength || val.length > maxLength) return false;
+
+    let pattern = `^[a-zA-Z${allowUnderscore ? "_" : ""}${
+      allowDigits ? "0-9" : ""
+    }]+$`;
+    return new RegExp(pattern).test(val);
+  };
+}
+
+interface PhoneValidatorOptions {
+  allowPlusPrefix?: boolean;
+  minDigits?: number;
+  maxDigits?: number;
+}
+
+function createPhoneValidator(options: PhoneValidatorOptions = {}) {
+  const { allowPlusPrefix = true, minDigits = 9, maxDigits = 15 } = options;
+
+  const pattern = allowPlusPrefix
+    ? new RegExp(`^\\+?[0-9]{${minDigits},${maxDigits}}$`)
+    : new RegExp(`^[0-9]{${minDigits},${maxDigits}}$`);
+
+  return (val: any): boolean => typeof val === "string" && pattern.test(val);
+}
+
+function isIsoDate(value: string): boolean {
+  return (
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z$/.test(value) ||
+    /^\d{4}-\d{2}-\d{2}$/.test(value)
+  );
+}
+
+export {
+  parseValue,
+  createPasswordValidator,
+  createEmailValidator,
+  createUsernameValidator,
+  createPhoneValidator,
+  isIsoDate,
+};
