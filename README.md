@@ -21,9 +21,8 @@ It helps you convert raw user inputs (usually strings from `req.query`, `req.bod
 ## 📦 Installation
 
 ```bash
-npm install @cleaner/core
-# or
-yarn add @cleaner/core
+npm install @cleaner/core zod yup
+```
 
 ---
 
@@ -72,28 +71,96 @@ import express from 'express';
 import { createNormalizerMiddleware } from '@cleaner/core';
 
 const app = express();
-
 app.use(express.json());
 
 app.post(
   '/submit',
   createNormalizerMiddleware({
-    source: 'body', // 'query' | 'params' | 'body'
+    source: 'body',
     options: {
       validators: {
         password: (val) => val.length >= 8,
       },
+      validationMode: 'collect',
     },
   }),
   (req, res) => {
-    res.send(req.normalized); // normalized version of req.body
+    if (req.normalized?.errors) {
+      return res.status(400).json({ errors: req.normalized.errors });
+    }
+    res.send(req.normalized.result);
   }
 );
 ```
 
 ---
 
-## ⚙️ Available Options
+## 🧪 Schema Validation Support
+
+### ✅ Zod
+
+```ts
+import { z } from 'zod';
+
+const schema = z.object({
+  username: z.string().min(3),
+  age: z.number().min(18),
+});
+
+const { result, errors } = normalize(input, {
+  schema: {
+    type: 'zod',
+    validator: schema,
+  },
+  validationMode: 'collect',
+});
+```
+
+---
+
+### ✅ Yup
+
+```ts
+import * as yup from 'yup';
+
+const schema = yup.object().shape({
+  email: yup.string().email().required(),
+});
+
+const { result, errors } = normalize(input, {
+  schema: {
+    type: 'yup',
+    validator: schema,
+  },
+  validationMode: 'collect',
+});
+```
+
+---
+
+### ✅ Custom Schema
+
+```ts
+const customSchema = {
+  validate: (input) => {
+    const errors = {};
+    if (input.role !== 'admin') errors.role = 'Must be admin';
+    return { valid: Object.keys(errors).length === 0, errors };
+  },
+};
+
+const { result, errors } = normalize(input, {
+  schema: {
+    type: 'custom',
+    validator: customSchema,
+  },
+  validationMode: 'collect',
+});
+```
+
+---
+
+## ⚙️ Options
 
 | Option | Type | Description |
 |--------|------|-------------|
@@ -105,30 +172,12 @@ app.post(
 | `treatEmptyStringAs` | `"null" \| "undefined" \| "keep"` | How to handle empty strings |
 | `removeUndefinedFields` | `boolean` | If `true`, removes `undefined` keys |
 | `fieldTransformers` | `{ [key]: (val) => any }` | Field-specific mutation |
-| `fieldParsers` | `{ type: (val) => any }` | Per-type custom parser (string, number, date...) |
+| `fieldParsers` | `{ type: (val) => any }` | Per-type custom parser |
 | `validators` | `{ [key]: (val) => boolean }` | Field validation logic |
-| `validationMode` | `"none" \| "strict" \| "collect"` | Controls error behavior |
-| `defaultValues` | `{ [key]: any }` | Inject default values if missing/null |
-| `schemaFallbacks` | `{ [key]: (val) => any }` | Post-parse fix function |
-
----
-
-## 🧪 TypeScript Support
-
-All APIs are fully typed.
-
-```ts
-normalize<MyDTO>(input, options): NormalizerResult<MyDTO>;
-```
-
----
-
-## 🧩 Use Cases
-
-- Clean up query params, form inputs, or API payloads
-- Prepare inputs for validation or DB insertion
-- Add defaults, sanitize values, and reject invalid data
-- Normalize external integrations or CLI args
+| `defaultValues` | `{ [key]: any }` | Fallback values if null/undefined |
+| `schemaFallbacks` | `{ [key]: (val) => any }` | Apply fallback if schema fails |
+| `validationMode` | `"none" \| "strict" \| "collect"` | Error behavior |
+| `schema` | `zod \| yup \| custom` | Schema-level validator |
 
 ---
 
@@ -139,7 +188,7 @@ src/
 ├── InputNormalizer.ts       # Main class-based engine
 ├── normalize.ts             # Functional API
 ├── utils.ts                 # Helpers
-├── types.ts                 # Core interfaces
+├── types.ts                 # Interfaces and types
 ```
 
 ---

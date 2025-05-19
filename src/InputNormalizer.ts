@@ -1,11 +1,21 @@
-import { NormalizerOptions, NormalizerResult } from "./types";
+import {
+  NormalizerOptions,
+  NormalizerResult,
+  INormalizerPlugin,
+} from "./types";
 import { parseValue } from "./utils";
+import { PluginRegistry } from "./plugins";
 
 export class InputNormalizer {
   private options: NormalizerOptions;
   private result?: Record<string, any>;
 
   constructor(options: NormalizerOptions = {}) {
+    const mergedPlugins = [
+      ...PluginRegistry.getAll(), // global plugins
+      ...(options.plugins || []), // instance plugins
+    ];
+
     this.options = {
       treatEmptyStringAs: "null",
       removeUndefinedFields: false,
@@ -22,11 +32,11 @@ export class InputNormalizer {
       schemaFallbacks: {},
       validators: {},
       validationMode: "none",
+      plugins: mergedPlugins,
       ...options,
     };
   }
 
-  /** Main normalization method */
   normalize<T = any>(input: Record<string, any>): NormalizerResult<T> {
     const result: Record<string, any> = {};
     this.result = result;
@@ -46,20 +56,21 @@ export class InputNormalizer {
     for (const key in input) {
       if (!Object.prototype.hasOwnProperty.call(input, key)) continue;
 
-      // ✅ Skip if not in whitelist
       if (Array.isArray(whitelist) && !whitelist.includes(key)) continue;
-
-      // ✅ Skip if in blacklist
       if (Array.isArray(blacklist) && blacklist.includes(key)) continue;
+
+      this.dispatchPlugin("beforeFieldNormalize", {
+        key,
+        rawValue: input[key],
+        options: this.options,
+      });
 
       let rawVal = input[key];
 
-      // ✅ Apply field transformer
       if (typeof fieldTransformers?.[key] === "function") {
         rawVal = fieldTransformers[key](rawVal);
       }
 
-      // ✅ Normalize the value
       let normalizedVal: any;
       if (Array.isArray(rawVal)) {
         normalizedVal = rawVal.map((v) =>
@@ -73,27 +84,33 @@ export class InputNormalizer {
         normalizedVal = parseValue(rawVal, key, this.options);
       }
 
-      // ✅ Schema fallback
       if (typeof schemaFallbacks?.[key] === "function") {
         normalizedVal = schemaFallbacks[key](normalizedVal);
       }
 
-      // ✅ Validation
       const isValid =
         typeof validators?.[key] === "function"
           ? validators[key](normalizedVal)
           : true;
 
       if (!isValid) {
+        const message = `Validation failed for field "${key}"`;
+
         if (validationMode === "strict") {
-          throw new Error(`Validation failed for field "${key}"`);
+          throw new Error(message);
         }
+
         if (validationMode === "collect") {
-          errors[key] = `Validation failed for field "${key}"`;
+          errors[key] = message;
+
+          this.dispatchPlugin("onValidationError", {
+            key,
+            error: message,
+            currentValue: normalizedVal,
+          });
         }
       }
 
-      // ✅ Default value if null/undefined
       if (
         (normalizedVal === null || normalizedVal === undefined) &&
         Object.prototype.hasOwnProperty.call(defaultValues, key)
@@ -101,12 +118,18 @@ export class InputNormalizer {
         normalizedVal = defaultValues[key];
       }
 
-      // ✅ Omit if undefined and configured
       if (normalizedVal === undefined && removeUndefinedFields) {
         continue;
       }
 
       result[key] = normalizedVal;
+
+      this.dispatchPlugin("afterFieldNormalize", {
+        key,
+        normalizedValue: normalizedVal,
+        rawValue: input[key],
+        result,
+      });
     }
 
     if (this.options.schema) {
@@ -153,6 +176,11 @@ export class InputNormalizer {
       }
     }
 
+    this.dispatchPlugin("afterNormalize", {
+      result,
+      errors,
+    });
+
     return {
       result: result as T,
       ...(Object.keys(errors).length > 0 && validationMode === "collect"
@@ -180,14 +208,27 @@ export class InputNormalizer {
       for (const key in schemaErrors) {
         collector[key] = schemaErrors[key];
 
-        // 🔁 Fallback if defined for invalid field
+        this.dispatchPlugin("onValidationError", {
+          key,
+          error: schemaErrors[key],
+          currentValue: targetResult[key],
+        });
+
         const fallbackFn = this.options.schemaFallbacks?.[key];
         if (typeof fallbackFn === "function") {
-          // apply fallback to result directly
-          const currentValue = targetResult?.[key];
+          const currentValue = targetResult[key];
           targetResult[key] = fallbackFn(currentValue);
         }
       }
     }
+  }
+
+  private dispatchPlugin<K extends keyof INormalizerPlugin>(
+    hook: K,
+    payload: Parameters<Required<INormalizerPlugin>[K]>[0]
+  ) {
+    this.options.plugins?.forEach((plugin) => {
+      plugin[hook]?.(payload as any);
+    });
   }
 }

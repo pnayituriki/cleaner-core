@@ -45,6 +45,8 @@ export interface NormalizerOptions {
 
   validationMode?: ValidationMode;
   schema?: NormalizerSchema;
+
+  plugins?: INormalizerPlugin[];
 }
 
 /** Result object from normalization */
@@ -55,4 +57,30 @@ export interface NormalizerResult<T = any> {
 
 export interface ValidationErrorMap {
   [field: string]: string;
+}
+
+export interface INormalizerPlugin {
+  beforeFieldNormalize?: (context: {
+    key: string;
+    rawValue: any;
+    options: NormalizerOptions;
+  }) => void;
+
+  afterFieldNormalize?: (context: {
+    key: string;
+    normalizedValue: any;
+    rawValue: any;
+    result: Record<string, any>;
+  }) => void;
+
+  onValidationError?: (context: {
+    key: string;
+    error: string;
+    currentValue: any;
+  }) => void;
+
+  afterNormalize?: (context: {
+    result: Record<string, any>;
+    errors: Record<string, string>;
+  }) => void;
 }
