@@ -1,3 +1,5 @@
+import type { ZodType } from "zod";
+
 /** Validation modes */
 export type ValidationMode = "none" | "collect" | "strict";
 
@@ -13,7 +15,13 @@ export interface FieldParsers {
 export type ValidatorFn = (val: any) => boolean;
 
 /** Custom fallback handler when validation fails */
+export type SchemaType = "zod" | "yup" | "custom";
 export type SchemaFallbackFn = (val: any) => any;
+
+export interface NormalizerSchema {
+  type: SchemaType;
+  validator: any; // Accepts Zod, Yup, or custom validator with .validate()
+}
 
 /** Normalizer config options */
 export interface NormalizerOptions {
@@ -36,6 +44,7 @@ export interface NormalizerOptions {
   validators?: Record<string, ValidatorFn>;
 
   validationMode?: ValidationMode;
+  schema?: NormalizerSchema;
 }
 
 /** Result object from normalization */
@@ -47,4 +56,3 @@ export interface NormalizerResult<T = any> {
 export interface ValidationErrorMap {
   [field: string]: string;
 }
-

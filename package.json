@@ -24,7 +24,9 @@
     "express",
     "middleware",
     "object",
-    "validation"
+    "validation",
+    "transform",
+    "clean"
   ],
   "author": "Patrick NAYITURIKI",
   "license": "MIT",
@@ -39,5 +41,9 @@
     "ts-jest": "^29.3.3",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "yup": "^1.6.1",
+    "zod": "^3.25.3"
   }
 }

@@ -3,6 +3,7 @@ import { parseValue } from "./utils";
 
 export class InputNormalizer {
   private options: NormalizerOptions;
+  private result?: Record<string, any>;
 
   constructor(options: NormalizerOptions = {}) {
     this.options = {
@@ -28,6 +29,7 @@ export class InputNormalizer {
   /** Main normalization method */
   normalize<T = any>(input: Record<string, any>): NormalizerResult<T> {
     const result: Record<string, any> = {};
+    this.result = result;
     const errors: Record<string, string> = {};
 
     const {
@@ -107,6 +109,50 @@ export class InputNormalizer {
       result[key] = normalizedVal;
     }
 
+    if (this.options.schema) {
+      const { type, validator } = this.options.schema;
+
+      try {
+        if (type === "zod") {
+          const parseResult = validator.safeParse(result);
+          if (!parseResult.success) {
+            const formattedErrors = Object.fromEntries(
+              parseResult.error.errors.map((e: any) => [
+                e.path.join("."),
+                e.message,
+              ])
+            );
+            this._handleSchemaErrors(formattedErrors, errors, result);
+          }
+        } else if (type === "yup") {
+          try {
+            validator.validateSync(result, { abortEarly: false });
+          } catch (yupErr: any) {
+            const formattedErrors = (yupErr?.inner || []).reduce(
+              (acc: any, err: any) => {
+                acc[err.path] = err.message;
+                return acc;
+              },
+              {}
+            );
+            this._handleSchemaErrors(formattedErrors, errors, result);
+          }
+        } else if (
+          type === "custom" &&
+          typeof validator.validate === "function"
+        ) {
+          const validationResult = validator.validate(result);
+          if (!validationResult.valid) {
+            this._handleSchemaErrors(validationResult.errors, errors, result);
+          }
+        }
+      } catch (e) {
+        if (this.options.validationMode === "strict") {
+          throw new Error(`Schema validation failed: ${(e as Error).message}`);
+        }
+      }
+    }
+
     return {
       result: result as T,
       ...(Object.keys(errors).length > 0 && validationMode === "collect"
@@ -117,5 +163,31 @@ export class InputNormalizer {
 
   private isObject(value: any): value is Record<string, any> {
     return typeof value === "object" && value !== null && !Array.isArray(value);
+  }
+
+  private _handleSchemaErrors(
+    schemaErrors: Record<string, string>,
+    collector: Record<string, string>,
+    targetResult: Record<string, any>
+  ) {
+    const mode = this.options.validationMode;
+    if (mode === "strict") {
+      throw new Error(
+        `Schema validation failed: ${JSON.stringify(schemaErrors)}`
+      );
+    }
+    if (mode === "collect") {
+      for (const key in schemaErrors) {
+        collector[key] = schemaErrors[key];
+
+        // 🔁 Fallback if defined for invalid field
+        const fallbackFn = this.options.schemaFallbacks?.[key];
+        if (typeof fallbackFn === "function") {
+          // apply fallback to result directly
+          const currentValue = targetResult?.[key];
+          targetResult[key] = fallbackFn(currentValue);
+        }
+      }
+    }
   }
 }
