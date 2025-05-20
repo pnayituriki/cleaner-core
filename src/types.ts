@@ -84,3 +84,29 @@ export interface INormalizerPlugin {
     errors: Record<string, string>;
   }) => void;
 }
+
+export interface INormalizerPlugin {
+  beforeFieldNormalize?: (context: {
+    key: string;
+    rawValue: any;
+    options: NormalizerOptions;
+  }) => void;
+
+  afterFieldNormalize?: (context: {
+    key: string;
+    normalizedValue: any;
+    rawValue: any;
+    result: Record<string, any>;
+  }) => void;
+
+  onValidationError?: (context: {
+    key: string;
+    error: string;
+    currentValue: any;
+  }) => void;
+
+  afterNormalize?: (context: {
+    result: Record<string, any>;
+    errors: Record<string, string>;
+  }) => void;
+}
