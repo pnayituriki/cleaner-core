@@ -3,7 +3,7 @@ import {
   NormalizerResult,
   INormalizerPlugin,
 } from "./types";
-import { parseValue } from "./utils";
+import { parseValue, resolveMessage } from "./utils";
 import { PluginRegistry } from "./plugins";
 
 export class InputNormalizer {
@@ -94,7 +94,12 @@ export class InputNormalizer {
           : true;
 
       if (!isValid) {
-        const message = `Validation failed for field "${key}"`;
+        const message = resolveMessage(
+          key,
+          "invalid",
+          normalizedVal,
+          this.options.messages
+        );
 
         if (validationMode === "strict") {
           throw new Error(message);
@@ -204,14 +209,25 @@ export class InputNormalizer {
         `Schema validation failed: ${JSON.stringify(schemaErrors)}`
       );
     }
+
     if (mode === "collect") {
       for (const key in schemaErrors) {
-        collector[key] = schemaErrors[key];
+        // const originalMessage = schemaErrors[key];
+        const value = targetResult[key];
+
+        const message = resolveMessage(
+          key,
+          "schema",
+          value,
+          this.options.messages
+        );
+
+        collector[key] = message;
 
         this.dispatchPlugin("onValidationError", {
           key,
-          error: schemaErrors[key],
-          currentValue: targetResult[key],
+          error: message,
+          currentValue: value,
         });
 
         const fallbackFn = this.options.schemaFallbacks?.[key];

@@ -18,6 +18,14 @@ export type ValidatorFn = (val: any) => boolean;
 export type SchemaType = "zod" | "yup" | "custom";
 export type SchemaFallbackFn = (val: any) => any;
 
+export type MessageSource =
+  | Record<string, string>
+  | ((params: {
+      key: string;
+      type: "required" | "invalid" | "schema";
+      value: any;
+    }) => string);
+
 export interface NormalizerSchema {
   type: SchemaType;
   validator: any; // Accepts Zod, Yup, or custom validator with .validate()
@@ -45,6 +53,9 @@ export interface NormalizerOptions {
 
   validationMode?: ValidationMode;
   schema?: NormalizerSchema;
+
+  messages?: MessageSource;
+  language?: string;
 
   plugins?: INormalizerPlugin[];
 }

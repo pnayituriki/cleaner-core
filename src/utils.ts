@@ -1,4 +1,4 @@
-import { NormalizerOptions } from "./types";
+import { MessageSource, NormalizerOptions } from "./types";
 
 /**
  * Parses a single string value into a normalized type (boolean, number, date, null, etc.)
@@ -138,6 +138,23 @@ function isIsoDate(value: string): boolean {
   );
 }
 
+function resolveMessage(
+  key: string,
+  type: "required" | "invalid" | "schema",
+  value: any,
+  messages?: MessageSource
+): string {
+  if (!messages) return `Validation failed for ${key}`;
+  if (typeof messages === "function") {
+    return messages({ key, type, value });
+  }
+  return (
+    messages[`${key}.${type}`] ||
+    messages[key] ||
+    `Validation failed for ${key}`
+  );
+}
+
 export {
   parseValue,
   createPasswordValidator,
@@ -145,4 +162,5 @@ export {
   createUsernameValidator,
   createPhoneValidator,
   isIsoDate,
+  resolveMessage,
 };
