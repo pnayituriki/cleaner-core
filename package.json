@@ -19,7 +19,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pnayituriki/formulate.git",
-    "prepublishOnly": "npm run build && npm test"
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run test",
+    "publish:check": "npm run build && npm test && npm publish --access public"
   },
   "keywords": [
     "normalize",
