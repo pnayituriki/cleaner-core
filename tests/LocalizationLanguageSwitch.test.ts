@@ -6,7 +6,7 @@ describe("Localization - setLanguage() behavior", () => {
       "email.invalid": "Invalid email address",
     },
     fr: {
-      "email.invalid": "Invalid email address",
+      "email.invalid": "Adresse email invalide",
     },
   };
 
@@ -37,6 +37,6 @@ describe("Localization - setLanguage() behavior", () => {
     normalizer.setLanguage("fr");
 
     const { errors } = normalizer.normalize({ email: "bad" });
-    expect(errors?.email).toBe("Invalid email address");
+    expect(errors?.email).toBe("Adresse email invalide");
   });
 });

@@ -193,31 +193,27 @@ src/
 
 ---
 
-## 📄 License
+## Documentation
 
-MIT © 2024 Patrick NAYITURIKI  
-Pull requests are welcome!
+- 🔤 [Localization Guide](src/docs/guide-localization.md)
+- 🔌 [Plugin System](src/docs/guide-plugins.md)
+- 🧪 [Schema Validation](src/docs/guide-schema-validation.md)
+- 🚀 [Express Integration](src/docs/guide-express.md)
+- 🧠 [React Integration](src/docs/guide-react.md)
+- 📖 [Full Docs Index](src/docs/index.md)
 
 ---
 
-## Documentation
+## 📄 License
 
-- 🔤 [Documentation Guide](./docs/docs_index.md)
+MIT © 2025 Patrick NAYITURIKI
+Pull requests are welcome!
 
 ---
 
 ## 🤝 Contribution
 
-```bash
-# Fork & clone
-git clone https://github.com/yourname/cleaner-core
-
-# Install dependencies
-npm install
-
-# Run tests
-npm test
-```
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to propose changes and collaborate.
 
 
 Feel free to submit bug reports, PRs, or feature ideas.
