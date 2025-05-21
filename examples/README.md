@@ -1,4 +1,4 @@
-# @cleaner/core – Usage Examples
+# formulate – Usage Examples
 
 Explore how to use the library in real projects across different environments.
 
@@ -8,7 +8,7 @@ Explore how to use the library in real projects across different environments.
 
 ```ts
 import express from 'express';
-import { createNormalizerMiddleware } from '@cleaner/core';
+import { createNormalizerMiddleware } from 'formulate';
 
 const app = express();
 app.use(express.json());

@@ -1,6 +1,6 @@
 # 🔌 Plugin System Guide
 
-The `@cleaner/core` plugin system allows developers to hook into the normalization lifecycle to:
+The `formulate` plugin system allows developers to hook into the normalization lifecycle to:
 - Log field-level operations
 - Audit changes
 - Sanitize inputs dynamically

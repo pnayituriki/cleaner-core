@@ -1,6 +1,6 @@
 # 🤝 Contributing Guide
 
-Thank you for considering contributing to `@cleaner/core`!
+Thank you for considering contributing to `formulate`!
 
 ## 🧰 Development Setup
 
@@ -45,4 +45,4 @@ fix: resolve plugin execution timing issue
 - Focus on helpful code and improvements
 - Welcome newcomers and community learning
 
-Thanks for improving `@cleaner/core`!
+Thanks for improving `formulate`!

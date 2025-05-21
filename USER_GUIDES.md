@@ -1,4 +1,4 @@
-# @cleaner/core — Usage Examples
+# formulate — Usage Examples
 
 ---
 
@@ -6,7 +6,7 @@
 
 ```ts
 import express from 'express';
-import { createNormalizerMiddleware } from '@cleaner/core';
+import { createNormalizerMiddleware } from 'formulate';
 
 const app = express();
 app.use(express.json());
@@ -36,7 +36,7 @@ app.post(
 ## ⚛️ React / Next.js Integration
 
 ```tsx
-import { normalize } from '@cleaner/core';
+import { normalize } from 'formulate';
 
 function handleSubmit(formValues: Record<string, any>) {
   const { result, errors } = normalize(formValues, {
@@ -61,7 +61,7 @@ function handleSubmit(formValues: Record<string, any>) {
 ## 🖥️ CLI Input Normalization
 
 ```ts
-import { normalize } from '@cleaner/core';
+import { normalize } from 'formulate';
 
 const args = {
   debug: "true",

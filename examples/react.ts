@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { normalize } from "@cleaner/core";
+import { normalize } from "formulate";
 
 const { register, handleSubmit } = useForm();
 

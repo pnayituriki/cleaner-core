@@ -1,6 +1,6 @@
 # ⚛️ React Integration Guide (Upcoming)
 
-Future releases of `@cleaner/core` will include a `useCleaner()` hook for:
+Future releases of `formulate` will include a `useCleaner()` hook for:
 
 - Normalizing form state
 - Validating on change or blur

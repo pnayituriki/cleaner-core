@@ -1,6 +1,6 @@
-# @cleaner/core
+# formulate
 
-**@cleaner/core** is a framework-agnostic, TypeScript-first input normalization and validation library.  
+**formulate** is a framework-agnostic, TypeScript-first input normalization and validation library.  
 It helps you convert raw user inputs (usually strings from `req.query`, `req.body`, or forms) into well-typed, validated, and sanitized JavaScript objects.
 
 ---
@@ -21,7 +21,7 @@ It helps you convert raw user inputs (usually strings from `req.query`, `req.bod
 ## 📦 Installation
 
 ```bash
-npm install @cleaner/core zod yup
+npm install formulate zod yup
 ```
 
 ---
@@ -31,7 +31,7 @@ npm install @cleaner/core zod yup
 ### 🔹 Functional API
 
 ```ts
-import { normalize } from '@cleaner/core';
+import { normalize } from 'formulate';
 
 const { result, errors } = normalize(req.query, {
   convertBooleans: true,
@@ -48,7 +48,7 @@ const { result, errors } = normalize(req.query, {
 ### 🔹 OOP API
 
 ```ts
-import { InputNormalizer } from '@cleaner/core';
+import { InputNormalizer } from 'formulate';
 
 const normalizer = new InputNormalizer({
   defaultValues: { role: 'user' },
@@ -68,7 +68,7 @@ const { result } = normalizer.normalize({
 
 ```ts
 import express from 'express';
-import { createNormalizerMiddleware } from '@cleaner/core';
+import { createNormalizerMiddleware } from 'formulate';
 
 const app = express();
 app.use(express.json());

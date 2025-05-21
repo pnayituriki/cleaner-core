@@ -1,4 +1,4 @@
-import { normalize } from "@cleaner/core";
+import { normalize } from "formulate";
 import yargs from "yargs";
 
 const rawArgs = yargs(process.argv.slice(2)).argv;

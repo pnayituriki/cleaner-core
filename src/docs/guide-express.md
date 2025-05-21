@@ -1,12 +1,12 @@
 # 🚀 Express Integration Guide
 
-Use `@cleaner/core` to validate and normalize request data in an Express server.
+Use `formulate` to validate and normalize request data in an Express server.
 
 ## ✅ Middleware Setup
 
 ```ts
 import express from 'express';
-import { createNormalizerMiddleware, InputNormalizer } from '@cleaner/core';
+import { createNormalizerMiddleware, InputNormalizer } from 'formulate';
 
 const normalizer = new InputNormalizer({
   validators: {

@@ -1,6 +1,6 @@
 # Documentation Index
 
-Welcome to the `@cleaner/core` documentation. Below are available guides:
+Welcome to the `formulate` documentation. Below are available guides:
 
 - 🔤 [Localization Guide](./guide-localization.md)
 - 🔌 [Plugin System](./guide-plugins.md)

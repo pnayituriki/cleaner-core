@@ -1,5 +1,5 @@
 {
-  "name": "@cleaner/core",
+  "name": "formulate",
   "version": "1.0.0",
   "description": "Type-safe input normalization and validation library for any JS/TS app — built for APIs, forms, and frameworks.",
   "main": "dist/index.js",
@@ -18,7 +18,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pnayituriki/cleaner-core.git",
+    "url": "git+https://github.com/pnayituriki/formulate.git",
     "prepublishOnly": "npm run build && npm test"
   },
   "keywords": [
@@ -37,14 +37,15 @@
     "object",
     "validation",
     "transform",
-    "clean"
+    "clean",
+    "formulate"
   ],
   "author": "Patrick NAYITURIKI",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pnayituriki/cleaner-core/issues"
+    "url": "https://github.com/pnayituriki/formulate/issues"
   },
-  "homepage": "https://github.com/pnayituriki/cleaner-core#readme",
+  "homepage": "https://github.com/pnayituriki/formulate#readme",
   "devDependencies": {
     "@types/jest": "^29.5.14",
     "@types/node": "^22.15.18",

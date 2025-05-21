@@ -1,6 +1,6 @@
 # 🧪 Schema Validation Guide
 
-`@cleaner/core` supports field-level schema validation via:
+`formulate` supports field-level schema validation via:
 
 - [Zod](https://github.com/colinhacks/zod)
 - [Yup](https://github.com/jquense/yup)
