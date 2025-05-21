@@ -140,19 +140,24 @@ function isIsoDate(value: string): boolean {
 
 function resolveMessage(
   key: string,
-  type: "required" | "invalid" | "schema",
+  type: "invalid" | "required" | "schema",
   value: any,
-  messages?: MessageSource
-): string {
-  if (!messages) return `Validation failed for ${key}`;
+  messages?: Record<string, any> | ((params: any) => string),
+  language: string = "en"
+): string | undefined {
+  const code = `${key}.${type}`;
+  if (!messages) return;
+
   if (typeof messages === "function") {
-    return messages({ key, type, value });
+    return messages({ key, type, value, language });
   }
-  return (
-    messages[`${key}.${type}`] ||
-    messages[key] ||
-    `Validation failed for ${key}`
-  );
+
+  if (typeof messages === "object") {
+    const langSet = messages?.[language] || messages?.["en"] || messages;
+    return langSet[code] || langSet[key];
+  }
+
+  return;
 }
 
 export {

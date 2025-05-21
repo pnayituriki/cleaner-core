@@ -8,7 +8,8 @@ export const LoggerPlugin: INormalizerPlugin = {
     console.log(`[Logger] → ${key}:`, normalizedValue);
   },
   onValidationError: ({ key, error }) => {
-    console.warn(`[Logger] ⚠️ Validation failed: ${key} — ${error}`);
+    // console.warn(`[Logger] ⚠️ Validation failed: ${key} — ${error}`);
+    console.warn(`[Logger] ❌ ${key}: ${error}`);
   },
   afterNormalize: ({ result, errors }) => {
     console.log(`[Logger] ✅ Final Result:`, result);

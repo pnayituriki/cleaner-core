@@ -1,10 +1,6 @@
 import { z } from "zod";
 import * as yup from "yup";
-import {
-  createPasswordValidator,
-  InputNormalizer,
-  NormalizerOptions,
-} from "../src";
+import { InputNormalizer } from "../src";
 
 const customMessages = {
   "email.invalid": "Validation failed for email",
@@ -42,7 +38,9 @@ describe("Schema validation behavior", () => {
         validator: schema,
       },
       validationMode: "collect",
-      messages: customMessages,
+      messages: {
+        "username.schema": "String must contain at least 3 characters",
+      },
     });
 
     const { errors } = normalizer.normalize({ username: "ab" });
@@ -60,7 +58,9 @@ describe("Schema validation behavior", () => {
     const normalizer = new InputNormalizer({
       schema: { type: "yup", validator: schema },
       validationMode: "collect",
-      messages: customMessages,
+      messages: {
+        "email.schema": "must be a valid email",
+      },
     });
 
     const { errors } = normalizer.normalize({ email: "not-an-email" });
@@ -88,7 +88,9 @@ describe("Schema validation behavior", () => {
         validator: customValidator,
       },
       validationMode: "collect",
-      messages: customMessages,
+      messages: {
+        "role.schema": "Must be admin",
+      },
     });
 
     const { errors } = normalizer.normalize({ role: "guest" });
@@ -96,3 +98,4 @@ describe("Schema validation behavior", () => {
     expect(errors?.role).toBe("Must be admin");
   });
 });
+

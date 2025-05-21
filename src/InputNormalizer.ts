@@ -94,18 +94,20 @@ export class InputNormalizer {
           : true;
 
       if (!isValid) {
-        const message = resolveMessage(
-          key,
-          "invalid",
-          normalizedVal,
-          this.options.messages
-        );
+        const message =
+          resolveMessage(
+            key,
+            "invalid",
+            normalizedVal,
+            this.options.messages,
+            this.options.language
+          ) || `Validation failed for field "${key}"`;
 
         if (validationMode === "strict") {
           throw new Error(message);
         }
 
-        if (validationMode === "collect") {
+        if (validationMode === "collect" && !!message) {
           errors[key] = message;
 
           this.dispatchPlugin("onValidationError", {
@@ -194,6 +196,10 @@ export class InputNormalizer {
     };
   }
 
+  setLanguage(language: string) {
+    this.options.language = language;
+  }
+
   private isObject(value: any): value is Record<string, any> {
     return typeof value === "object" && value !== null && !Array.isArray(value);
   }
@@ -204,6 +210,8 @@ export class InputNormalizer {
     targetResult: Record<string, any>
   ) {
     const mode = this.options.validationMode;
+    const lang = this.options.language || "en";
+
     if (mode === "strict") {
       throw new Error(
         `Schema validation failed: ${JSON.stringify(schemaErrors)}`
@@ -212,21 +220,18 @@ export class InputNormalizer {
 
     if (mode === "collect") {
       for (const key in schemaErrors) {
-        // const originalMessage = schemaErrors[key];
         const value = targetResult[key];
 
-        const message = resolveMessage(
-          key,
-          "schema",
-          value,
-          this.options.messages
-        );
+        // try to resolve custom message; fallback to raw error
+        const resolved =
+          resolveMessage(key, "schema", value, this.options.messages, lang) ||
+          schemaErrors[key];
 
-        collector[key] = message;
+        collector[key] = resolved;
 
         this.dispatchPlugin("onValidationError", {
           key,
-          error: message,
+          error: resolved,
           currentValue: value,
         });
 

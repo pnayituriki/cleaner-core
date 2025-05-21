@@ -19,12 +19,15 @@ export type SchemaType = "zod" | "yup" | "custom";
 export type SchemaFallbackFn = (val: any) => any;
 
 export type MessageSource =
-  | Record<string, string>
+  | Record<string, string> // single language
+  | Record<string, Record<string, string>> // multi-language
   | ((params: {
       key: string;
       type: "required" | "invalid" | "schema";
       value: any;
+      language?: string;
     }) => string);
+
 
 export interface NormalizerSchema {
   type: SchemaType;

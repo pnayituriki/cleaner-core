@@ -17,9 +17,6 @@ describe("Plugin System", () => {
     });
 
     normalizer.normalize({ name: "a" });
-
-    // expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Normalizing field"));
-    // expect(warnSpy).toHaveBeenCalledWith(expect.stringContaining("Validation failed"));
     expect(consoleSpy.mock.calls.flat().join(" ")).toContain(
       "Normalizing field"
     );

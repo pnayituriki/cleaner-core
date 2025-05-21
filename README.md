@@ -200,6 +200,12 @@ Pull requests are welcome!
 
 ---
 
+## Documentation
+
+- 🔤 [Documentation Guide](./docs/docs_index.md)
+
+---
+
 ## 🤝 Contribution
 
 ```bash
@@ -213,4 +219,5 @@ npm install
 npm test
 ```
 
-Feel free to submit bug reports, PRs, or feature ideas via [Issues](https://github.com/yourname/cleaner-core/issues).
+
+Feel free to submit bug reports, PRs, or feature ideas.
