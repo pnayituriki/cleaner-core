@@ -215,5 +215,8 @@ Pull requests are welcome!
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md) for how to propose changes and collaborate.
 
+## 📦 Releases & Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for a full history of updates.
 
 Feel free to submit bug reports, PRs, or feature ideas.
