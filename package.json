@@ -1,6 +1,6 @@
 {
   "name": "formulate",
-  "version": "1.0.1",
+  "version": "1.0.0",
   "description": "Type-safe input normalization and validation library for any JS/TS app — built for APIs, forms, and frameworks.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
